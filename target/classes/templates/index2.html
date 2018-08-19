@@ -1,0 +1,30 @@
+<html>
+<head>
+    <title>Jokenpo</title>
+</head>
+<body>
+    <div th:if="${noChoose}">
+        Please make a move
+    </div>
+    <div th:if="${userChoice}">
+        You choose <span th:text="${userChoice}" /> <br />
+        Computer choose <span th:text="${computerChoice}" /> <br />
+    </div>
+        <div th:if="${user}">
+            You win
+        </div>
+        <div th:if="${computer}">
+            Computer win
+        </div>
+        <div th:if="${draw}">
+            It's a draw
+        </div>
+        Choose your next move:
+        <form method="POST" action="/round">
+            <input type="radio" name="userMove" value="ROCK">Rock</input>
+            <input type="radio" name="userMove" value="SCISSORS">Scissors </input>
+            <input type="radio" name="userMove" value="PAPER">Paper</input>
+            <input type="submit" />
+        </form>
+</body>
+</html>

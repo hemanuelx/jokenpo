@@ -1,0 +1,21 @@
+<html>
+<head>
+    <title>Jokenpo</title>
+</head>
+<body>
+    <div th:if="${finishDraw}">
+        The game ends with a Draw
+    </div>
+    <div th:if="${finishPlayerWins}">
+        You win the game
+    </div>
+    <div th:if="${finishComputerWins}">
+        Computer win the game
+    </div>
+    <h2>Put your name here</h2>
+    <form method="POST" action="/user">
+        <input type="text" name="userName" /><br />
+        <input type="submit" />
+    </form>
+</body>
+</html>

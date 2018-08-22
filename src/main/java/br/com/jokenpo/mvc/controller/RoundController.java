@@ -16,13 +16,13 @@ import java.util.Random;
 @RequestMapping("/round")
 public class RoundController {
     private int rounds = 0;
-    private RoundRepository roundRepository;
     private UserRepository userRepository;
+    private JokenpoDefault jokenpoDefault;
 
     @Autowired
-    public RoundController(RoundRepository roundRepository, UserRepository userRepository) {
-        this.roundRepository = roundRepository;
+    public RoundController(UserRepository userRepository, JokenpoDefault jokenpoDefault) {
         this.userRepository = userRepository;
+        this.jokenpoDefault = jokenpoDefault;
     }
 
     @RequestMapping(method = RequestMethod.GET)
@@ -41,13 +41,13 @@ public class RoundController {
         model.addAttribute("userChoice", userMove.getDescription());
         model.addAttribute("computerChoice", computerMove.getDescription());
 
-        checkTheWinner(userMove, computerMove, model);
+        jokenpoDefault.checkTheWinner(userMove, computerMove, model);
         //Count the rounds
         rounds++;
         //it's the last round
         if (rounds == 10) {
-            long countUserWins = roundRepository.countByPlayerWin(true);
-            long countComputersWins = roundRepository.countByComputerWin(true);
+            long countUserWins = jokenpoDefault.countByPlayerWin();
+            long countComputersWins = jokenpoDefault.countByComputerWin();
 
             if (countUserWins > countComputersWins) {
                 model.addAttribute("finishPlayerWins", String.valueOf(countUserWins));
@@ -63,32 +63,6 @@ public class RoundController {
             return "index";
         }
         return "index2";
-    }
-
-    /**
-     * Verify by the move of each one who wins or if it's a dran
-     * @param userMove User movement
-     * @param computerMove Computer movement
-     * @param model model to send information to the screen
-     */
-    public void checkTheWinner(Move userMove, Move computerMove, Model model) {
-        if (!userMove.equals(computerMove)) {
-            //when computer wins
-            if ((userMove.equals(Move.PAPER) && computerMove.equals(Move.SCISSORS)) ||
-                    (userMove.equals(Move.ROCK) && computerMove.equals(Move.PAPER)) ||
-                    (userMove.equals(Move.SCISSORS) && computerMove.equals(Move.ROCK))) {
-                model.addAttribute("computer", true);
-                roundRepository.saveAndFlush(new Round(false, true));
-            } else {
-                //When player win
-                model.addAttribute("user", true);
-                roundRepository.saveAndFlush(new Round(true, false));
-            }
-        } else {
-            //when it's a draw
-            model.addAttribute("draw", true);
-            roundRepository.saveAndFlush(new Round(true, true));
-        }
     }
 
     /**
@@ -112,7 +86,7 @@ public class RoundController {
      * Clear the tables from M2
      */
     public void clearDatabase(){
-        roundRepository.deleteAll();
+        jokenpoDefault.deleteAllRounds();
         userRepository.deleteAll();
     }
 }
